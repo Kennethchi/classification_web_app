@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://drive.google.com/uc?export=download&confirm=LAYX&id=1-0OG44tQJO4g47JooUbDtFmD7_S1IBjI'
+export_file_url = 'https://drive.google.com/uc?export=download&id=1-0OG44tQJO4g47JooUbDtFmD7_S1IBjI'
 export_file_name = 'fruits_classifier_model.pkl'
 
 classes = ['Apple Braeburn',
