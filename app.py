@@ -177,7 +177,7 @@ loop.close()
 
 
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
