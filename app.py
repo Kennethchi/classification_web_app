@@ -17,12 +17,12 @@ app = Flask(__name__)
 import os
 
 
-img_width = 299
-img_height = 299
+img_width = 224
+img_height = 224
 
 
-model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
-#model = keras.applications.resnet50.ResNet50(weights = "imagenet")
+#model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
+model = keras.applications.resnet50.ResNet50(weights = "imagenet")
 
 #model.save("InceptionResNetV2.h5")
 
@@ -56,26 +56,26 @@ def index():
 
 
 @app.route('/predict', methods=['GET', 'POST'])
-def upload():
+async def upload():
     if request.method == 'POST':
         # Get the file from post request
-        f = request.files['image']
+        f = await request.files['image']
 
         # Save the file to ./uploads
         basepath = os.path.dirname(__file__)
         file_path = os.path.join(
             basepath, 'uploads', secure_filename(f.filename))
-        f.save(file_path)
+        await f.save(file_path)
 
         # Make prediction
-        preds = model_predict(file_path, model)
+        preds = await model_predict(file_path, model)
 
         # Process your result for human
         # pred_class = preds.argmax(axis=-1)            # Simple argmax
         pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
         result = str(pred_class[0][0][1])               # Convert to string
 
-        os.remove(file_path)
+        await os.remove(file_path)
 
         return result
 
