@@ -43,7 +43,7 @@ def model_predict(img_path, model):
 
     # Be careful how your trained model deals with the input
     # otherwise, it won't make correct prediction!
-    x = preprocess_input(x, mode='tf')
+    x = preprocess_input(x, mode='caffe') # "tf"
 
     preds = model.predict(x)
     return preds
@@ -56,26 +56,26 @@ def index():
 
 
 @app.route('/predict', methods=['GET', 'POST'])
-async def upload():
+def upload():
     if request.method == 'POST':
         # Get the file from post request
-        f = await request.files['image']
+        f = request.files['image']
 
         # Save the file to ./uploads
         basepath = os.path.dirname(__file__)
         file_path = os.path.join(
             basepath, 'uploads', secure_filename(f.filename))
-        await f.save(file_path)
+        f.save(file_path)
 
         # Make prediction
-        preds = await model_predict(file_path, model)
+        preds = model_predict(file_path, model)
 
         # Process your result for human
         # pred_class = preds.argmax(axis=-1)            # Simple argmax
         pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
         result = str(pred_class[0][0][1])               # Convert to string
 
-        await os.remove(file_path)
+        os.remove(file_path)
 
         return result
 
