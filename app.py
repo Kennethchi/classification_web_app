@@ -19,6 +19,7 @@ import os
 
 img_width = 224
 img_height = 224
+preprocess_input_mode = "caffe"  #"tf" "torch"
 
 
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
@@ -43,7 +44,7 @@ def model_predict(img_path, model):
 
     # Be careful how your trained model deals with the input
     # otherwise, it won't make correct prediction!
-    x = preprocess_input(x, mode='caffe') # "tf"
+    x = preprocess_input(x, mode=preprocess_input_mode) # "tf"
 
     preds = model.predict(x)
     return preds
@@ -74,6 +75,10 @@ def upload():
         # pred_class = preds.argmax(axis=-1)            # Simple argmax
         pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
         result = str(pred_class[0][0][1])               # Convert to string
+
+
+        print(file_path)
+
 
         os.remove(file_path)
 
