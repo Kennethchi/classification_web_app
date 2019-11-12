@@ -17,6 +17,9 @@ app = Flask(__name__)
 import os
 
 
+img_width = 224
+img_height = 224
+
 
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
 model = keras.applications.resnet50.ResNet50(weights = "imagenet")
@@ -31,7 +34,7 @@ model = keras.applications.resnet50.ResNet50(weights = "imagenet")
 
 
 def model_predict(img_path, model):
-    img = image.load_img(img_path, target_size=(299, 299))  # target_size=(224, 224)
+    img = image.load_img(img_path, target_size=(img_width, img_height))  # target_size=(224, 224)
 
     # Preprocessing the image
     x = image.img_to_array(img)
