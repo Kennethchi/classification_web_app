@@ -1,191 +1,94 @@
-import aiohttp
-import asyncio
-import uvicorn
-from fastai import *
-from fastai.vision import *
-from io import BytesIO
-from starlette.applications import Starlette
-from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import HTMLResponse, JSONResponse
-from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://drive.google.com/uc?export=download&id=1-0OG44tQJO4g47JooUbDtFmD7_S1IBjI'
-export_file_name = 'fruits_classifier_model.pkl'
+# Keras
+from keras.applications.imagenet_utils import preprocess_input, decode_predictions
+from keras.models import load_model, Model
+from keras.utils.vis_utils import plot_model
+from keras.preprocessing import image
+import keras
 
-classes = ['Apple Braeburn',
-           'Apple Crimson Snow',
-             'Apple Golden 1',
-             'Apple Golden 2',
-             'Apple Golden 3',
-             'Apple Granny Smith',
-             'Apple Pink Lady',
-             'Apple Red 1',
-             'Apple Red 2',
-             'Apple Red 3',
-             'Apple Red Delicious',
-             'Apple Red Yellow 1',
-             'Apple Red Yellow 2',
-             'Apricot',
-             'Avocado',
-             'Avocado ripe',
-             'Banana',
-             'Banana Lady Finger',
-             'Banana Red',
-             'Beetroot',
-             'Blueberry',
-             'Cactus fruit',
-             'Cantaloupe 1',
-             'Cantaloupe 2',
-             'Carambula',
-             'Cauliflower',
-             'Cherry 1',
-             'Cherry 2',
-             'Cherry Rainier',
-             'Cherry Wax Black',
-             'Cherry Wax Red',
-             'Cherry Wax Yellow',
-             'Chestnut',
-             'Clementine',
-             'Cocos',
-             'Dates',
-             'Eggplant',
-             'Ginger Root',
-             'Granadilla',
-             'Grape Blue',
-             'Grape Pink',
-             'Grape White',
-             'Grape White 2',
-             'Grape White 3',
-             'Grape White 4',
-             'Grapefruit Pink',
-             'Grapefruit White',
-             'Guava',
-             'Hazelnut',
-             'Huckleberry',
-             'Kaki',
-             'Kiwi',
-             'Kohlrabi',
-             'Kumquats',
-             'Lemon',
-             'Lemon Meyer',
-             'Limes',
-             'Lychee',
-             'Mandarine',
-             'Mango',
-             'Mango Red',
-             'Mangostan',
-             'Maracuja',
-             'Melon Piel de Sapo',
-             'Mulberry',
-             'Nectarine',
-             'Nectarine Flat',
-             'Nut Forest',
-             'Nut Pecan',
-             'Onion Red',
-             'Onion Red Peeled',
-             'Onion White',
-             'Orange',
-             'Papaya',
-             'Passion Fruit',
-             'Peach',
-             'Peach 2',
-             'Peach Flat',
-             'Pear',
-             'Pear Abate',
-             'Pear Forelle',
-             'Pear Kaiser',
-             'Pear Monster',
-             'Pear Red',
-             'Pear Williams',
-             'Pepino',
-             'Pepper Green',
-             'Pepper Red',
-             'Pepper Yellow',
-             'Physalis',
-             'Physalis with Husk',
-             'Pineapple',
-             'Pineapple Mini',
-             'Pitahaya Red',
-             'Plum',
-             'Plum 2',
-             'Plum 3',
-             'Pomegranate',
-             'Pomelo Sweetie',
-             'Potato Red',
-             'Potato Red Washed',
-             'Potato Sweet',
-             'Potato White',
-             'Quince',
-             'Rambutan',
-             'Raspberry',
-             'Redcurrant',
-             'Salak',
-             'Strawberry',
-             'Strawberry Wedge',
-             'Tamarillo',
-             'Tangelo',
-             'Tomato 1',
-             'Tomato 2',
-             'Tomato 3',
-             'Tomato 4',
-             'Tomato Cherry Red',
-             'Tomato Maroon',
-             'Tomato Yellow',
-             'Walnut']
+# Flask utils
+from flask import Flask, redirect, url_for, request, render_template, jsonify
+from werkzeug.utils import secure_filename
 
+# numpy utils
+import numpy as np
+app = Flask(__name__)
 
-path = Path(__file__).parent
-
-app = Starlette()
-app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Requested-With', 'Content-Type'])
-#app.mount('/static', StaticFiles(directory='app/static'))
-
-
-async def download_file(url, dest):
-    if dest.exists(): return
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            data = await response.read()
-            with open(dest, 'wb') as f:
-                f.write(data)
-
-
-async def setup_learner():
-    await download_file(export_file_url, path / export_file_name)
-    try:
-        learn = load_learner(path, export_file_name)
-        return learn
-    except RuntimeError as e:
-        if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
-            print(e)
-            message = "\n\nThis model was trained with an old version of fastai and will not work in a CPU environment.\n\nPlease update the fastai library in your training environment and export your model again.\n\nSee instructions for 'Returning to work' at https://course.fast.ai."
-            raise RuntimeError(message)
-        else:
-            raise
-
-
-loop = asyncio.get_event_loop()
-tasks = [asyncio.ensure_future(setup_learner())]
-learn = loop.run_until_complete(asyncio.gather(*tasks))[0]
-loop.close()
-
-
-#@app.route('/')
-#async def homepage(request):
-#    html_file = path / 'view' / 'index.html'
-#    return HTMLResponse(html_file.open().read())
+import os
 
 
 
-@app.route('/predict', methods=['POST'])
-async def analyze(request):
-    img_data = await request.form()
-    img_bytes = await (img_data['file'].read())
-    img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)[0]
-    return JSONResponse({'result': str(prediction)})
+model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
+
+#model.save("InceptionResNetV2.h5")
+
+#model = load_model("InceptionResNetV2.h5")
+
+#print(model.summary())
+
+
+
+
+def model_predict(img_path, model):
+    img = image.load_img(img_path, target_size=(299, 299))  # target_size=(224, 224)
+
+    # Preprocessing the image
+    x = image.img_to_array(img)
+    # x = np.true_divide(x, 255)
+    x = np.expand_dims(x, axis=0)
+
+    # Be careful how your trained model deals with the input
+    # otherwise, it won't make correct prediction!
+    x = preprocess_input(x, mode='tf')
+
+    preds = model.predict(x)
+    return preds
+
+
+@app.route('/', methods=['GET'])
+def index():
+    # Main page
+    return render_template("index.html")
+
+
+@app.route('/predict', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        # Get the file from post request
+        f = request.files['image']
+
+        # Save the file to ./uploads
+        basepath = os.path.dirname(__file__)
+        file_path = os.path.join(
+            basepath, 'uploads', secure_filename(f.filename))
+        f.save(file_path)
+
+        # Make prediction
+        preds = model_predict(file_path, model)
+
+        # Process your result for human
+        # pred_class = preds.argmax(axis=-1)            # Simple argmax
+        pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
+        result = str(pred_class[0][0][1])               # Convert to string
+
+        os.remove(file_path)
+
+        return result
+
+
+
+        #return jsonify(
+        #    prediction_class = str(pred_class[0][0][1]),
+        #    prediction_score = str(pred_class[0][0][2])
+        #)
+
+
+    return None
+
+
 
 
 if __name__ == '__main__':
-    if 'serve' in sys.argv:
-        uvicorn.run(app=app, host='0.0.0.0', port=5000, log_level="info")
+    app.run(port=5002, debug=True, threaded=False)
+    # Serve the app with gevent
+
