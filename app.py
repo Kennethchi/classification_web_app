@@ -18,7 +18,8 @@ import os
 
 
 
-model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
+#model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
+model = keras.applications.resnet50.ResNet50(weights = "imagenet")
 
 #model.save("InceptionResNetV2.h5")
 
