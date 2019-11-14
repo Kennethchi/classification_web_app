@@ -11,6 +11,7 @@ from flask import Flask, redirect, url_for, request, render_template, jsonify
 from werkzeug.utils import secure_filename
 import wget
 from google_drive_downloader import GoogleDriveDownloader as gd
+import gdown as gdown
 
 
 # numpy utils
@@ -19,6 +20,8 @@ app = Flask(__name__)
 
 import os
 
+
+gdown.download("https://drive.google.com/uc?id=1FSITXcRHK3CknIFE6Do4uE-es_huHT54", output="InceptionResNetV2.h5")
 
 
 
