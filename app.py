@@ -9,6 +9,9 @@ import keras
 # Flask utils
 from flask import Flask, redirect, url_for, request, render_template, jsonify
 from werkzeug.utils import secure_filename
+import wget
+from google_drive_downloader import GoogleDriveDownloader as gd
+
 
 # numpy utils
 import numpy as np
@@ -17,17 +20,19 @@ app = Flask(__name__)
 import os
 
 
+
+
 img_width = 299
 img_height = 299
 preprocess_input_mode = "tf"  #"tf" "torch"
 
 
-model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
+#model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
 #model = keras.applications.resnet50.ResNet50(weights = "imagenet")
 
 #model.save("InceptionResNetV2.h5")
 
-#model = load_model("InceptionResNetV2.h5")
+model = load_model("InceptionResNetV2.h5")
 
 #print(model.summary())
 
