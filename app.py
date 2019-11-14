@@ -21,7 +21,9 @@ app = Flask(__name__)
 import os
 
 
-gdown.download("https://drive.google.com/uc?id=1FSITXcRHK3CknIFE6Do4uE-es_huHT54", output="InceptionResNetV2.h5")
+#model_file = "InceptionResNetV2.h5"
+
+#gdown.download("https://drive.google.com/uc?id=1FSITXcRHK3CknIFE6Do4uE-es_huHT54", output= model_file)
 
 
 
@@ -32,10 +34,12 @@ preprocess_input_mode = "tf"  #"tf" "torch"
 
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
 #model = keras.applications.resnet50.ResNet50(weights = "imagenet")
+model = keras.applications.xception.Xception(weights = "imagenet")
+
 
 #model.save("InceptionResNetV2.h5")
 
-model = load_model("InceptionResNetV2.h5")
+#model = load_model(model_file)
 
 #print(model.summary())
 
@@ -86,14 +90,14 @@ def upload():
 
         os.remove(file_path)
 
-        return result
+        #return result
 
 
 
-        #return jsonify(
-        #    prediction_class = str(pred_class[0][0][1]),
-        #    prediction_score = str(pred_class[0][0][2])
-        #)
+        return jsonify(
+           prediction_class = str(pred_class[0][0][1]),
+           prediction_score = str(pred_class[0][0][2])
+        )
 
 
     return None
