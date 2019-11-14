@@ -17,13 +17,13 @@ app = Flask(__name__)
 import os
 
 
-img_width = 224
-img_height = 224
-preprocess_input_mode = "caffe"  #"tf" "torch"
+img_width = 299
+img_height = 299
+preprocess_input_mode = "tf"  #"tf" "torch"
 
 
-#model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
-model = keras.applications.resnet50.ResNet50(weights = "imagenet")
+model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
+#model = keras.applications.resnet50.ResNet50(weights = "imagenet")
 
 #model.save("InceptionResNetV2.h5")
 
@@ -75,10 +75,6 @@ def upload():
         # pred_class = preds.argmax(axis=-1)            # Simple argmax
         pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
         result = str(pred_class[0][0][1])               # Convert to string
-
-
-        print(file_path)
-
 
         os.remove(file_path)
 
