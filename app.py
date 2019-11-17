@@ -72,7 +72,7 @@ def index():
 def upload():
     if request.method == 'POST':
         # Get the file from post request
-        f = request.files['image']
+        f = request.files['file']
 
         # Save the file to ./uploads
         basepath = os.path.dirname(__file__)
@@ -96,7 +96,7 @@ def upload():
 
         return jsonify(
            prediction_class = str(pred_class[0][0][1]),
-           prediction_score = str(pred_class[0][0][2])
+           prediction_score = pred_class[0][0][2]
         )
 
 
