@@ -27,14 +27,14 @@ import os
 
 
 
-img_width = 224
-img_height = 224
-preprocess_input_mode = "caffe"  #"tf" "torch" "caffe"
+img_width = 299
+img_height = 299
+preprocess_input_mode = "tf"  #"tf" "torch" "caffe"
 
 
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
-model = keras.applications.resnet50.ResNet50(weights = "imagenet")
-#model = keras.applications.xception.Xception(weights = "imagenet")
+#model = keras.applications.resnet50.ResNet50(weights = "imagenet")
+model = keras.applications.xception.Xception(weights = "imagenet")
 
 
 #model.save("InceptionResNetV2.h5")
