@@ -33,7 +33,7 @@ preprocess_input_mode = "caffe"  #"tf" "torch" "caffe"
 
 
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet")
-model = keras.applications.resnet_v2.ResNet50V2(weights = "imagenet")
+model = keras.applications.resnet50.ResNet50(weights = "imagenet")
 #model = keras.applications.xception.Xception(weights = "imagenet")
 
 
