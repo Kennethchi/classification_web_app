@@ -5,8 +5,8 @@ numpy
 gevent
 pillow
 h5py
-tensorflow
-keras
+tensorflow==1.14.0
+keras==2.2.5
 wget
 googledrivedownloader
 gdown
