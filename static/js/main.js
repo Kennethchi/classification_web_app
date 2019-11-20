@@ -47,9 +47,8 @@ $(document).ready(function () {
                 $('.loader').hide();
                 $('#result').fadeIn(600);
 
-                var strObj = JSON.parse(data);
 
-                $('#result').text(' Result: ' + strObj.prediction_class);
+                $('#result').text(' Result: ' + data.toString());
                 console.log('Success!');
             },
         });
