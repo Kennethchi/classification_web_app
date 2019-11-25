@@ -35,7 +35,7 @@ preprocess_input_mode = "caffe"  #"tf" "torch" "caffe"
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet") # tf
 #model = keras.applications.resnet50.ResNet50(weights = "imagenet") # caffe
 #model = keras.applications.xception.Xception(weights = "imagenet") # tf
-model = keras.applications.mobilenet_v2.MobileNetV2(weights="imagenet")
+model = keras.applications.mobilenet.MobileNet(weights="imagenet")
 
 
 #model.save("InceptionResNetV2.h5")
