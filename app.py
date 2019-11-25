@@ -29,7 +29,7 @@ import os
 
 img_width = 224
 img_height = 224
-preprocess_input_mode = "caffe"  #"tf" "torch" "caffe"
+preprocess_input_mode = "tf"  #"tf" "torch" "caffe"
 
 
 #model = keras.applications.inception_resnet_v2.InceptionResNetV2(weights = "imagenet") # tf
